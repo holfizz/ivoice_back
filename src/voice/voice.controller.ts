@@ -109,7 +109,6 @@ export class VoiceController {
           voiceId: voiceCode,
           speed: data.settings.speed,
           pitch: 1.0,
-          language: "ru",
         },
         update: {
           voiceId: voiceCode,

@@ -52,7 +52,6 @@ export class TelegramService {
             state: "INITIAL",
             voiceSettings: {
               create: {
-                language: "ru",
                 voiceId: "Nec_24000",
                 speed: 1.0,
                 pitch: 1.0,
@@ -120,7 +119,6 @@ export class TelegramService {
         await this.prisma.voiceSettings.create({
           data: {
             userId: user.id,
-            language: "ru",
             voiceId: "Nec_24000",
             speed: 1.0,
             pitch: 1.0,
@@ -266,7 +264,6 @@ export class TelegramService {
     const voiceData = {
       voiceId: settings.voiceId || "Nec_24000",
       speed: settings.speed || 1.0,
-      language: "ru",
     } as const;
 
     if (!user.voiceSettings) {
