@@ -144,7 +144,7 @@ export class TelegramService {
       });
 
       await this.telegramClient.sendVoice(chatId, audioBuffer, {
-        caption: `🎯 Озвучено успешно!\n\n💰 Списано: ${cost} руб.\n💳 Остаток: ${(user.balance - cost).toFixed(2)} руб.`,
+        caption: `🎯 Озвучено успешно!\n\n💰 Списано: ${cost.toFixed(2)} руб.\n💳 Остаток: ${(user.balance - cost).toFixed(2)} руб.`,
       });
     } catch (error) {
       console.error("Error handling text:", error);
