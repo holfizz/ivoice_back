@@ -1,0 +1,27 @@
+model Voice {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  text        String   @db.Text
+  audioUrl    String   @map("audio_url")
+  language    String   @default("ru")
+  voiceId     String   @map("voice_id")
+  speed       Float    @default(1.0)
+  symbolCount Int      @map("symbol_count")
+  cost        Float
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("voices")
+}
+
+model VoiceSettings {
+  id      String @id @default(uuid())
+  userId  String @unique @map("user_id")
+  voiceId String @default("Nec_24000") @map("voice_id")
+  speed   Float  @default(1.0)
+  pitch   Float  @default(1.0)
+  user    User   @relation("UserVoiceSettings", fields: [userId], references: [id])
+
+  @@map("voice_settings")
+}

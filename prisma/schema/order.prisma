@@ -1,0 +1,20 @@
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELED
+}
+
+model Order {
+  id         String      @id @default(uuid())
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+  status     OrderStatus @default(PENDING)
+  amount     Float
+  paymentId  String?     @unique @map("payment_id")
+  paymentUrl String?     @map("payment_url")
+  userId     String      @map("user_id")
+  user       User        @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}

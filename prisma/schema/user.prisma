@@ -1,0 +1,22 @@
+// Enums
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String         @id @unique @default(uuid())
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  telegram_id   String?        @unique @map("telegram_id")
+  email         String?        @unique
+  balance       Float          @default(10)
+  roles         UserRole       @default(USER)
+  state         String         @default("INITIAL")
+  orders        Order[]
+  voices        Voice[]
+  voiceSettings VoiceSettings? @relation("UserVoiceSettings")
+
+  @@map("users")
+}

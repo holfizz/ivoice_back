@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "66ac4c4f-d090-4aaf-9493-378e947ba829"
+      }
+    },
+    "android": {
+      "package": "ru.wellnessai"
+    }
+  }
+}

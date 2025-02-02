@@ -1,0 +1,11 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Mutation {
+  createOrder(amount: Float!, userId: String!): Boolean!
+}
+
+type Query {
+  hello: String!
+}
