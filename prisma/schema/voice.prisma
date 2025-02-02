@@ -16,13 +16,12 @@ model Voice {
 }
 
 model VoiceSettings {
-  id       String @id @default(uuid())
-  userId   String @unique @map("user_id")
-  voiceId  String @default("Nec_24000") @map("voice_id")
-  speed    Float  @default(1.0)
-  pitch    Float  @default(1.0)
-  language String @default("ru")
-  user     User   @relation("UserVoiceSettings", fields: [userId], references: [id])
+  id      String @id @default(uuid())
+  userId  String @unique @map("user_id")
+  voiceId String @default("Nec_24000") @map("voice_id")
+  speed   Float  @default(1.0)
+  pitch   Float  @default(1.0)
+  user    User   @relation("UserVoiceSettings", fields: [userId], references: [id])
 
   @@map("voice_settings")
 }
