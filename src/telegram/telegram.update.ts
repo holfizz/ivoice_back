@@ -74,6 +74,28 @@ export class TelegramUpdate {
       if (!chatId) return;
 
       const text = ctx.message.text;
+      const userState = this.userStates.get(chatId);
+
+      if (userState?.action === "WAITING_EMAIL") {
+        const email = text.trim();
+        if (!email.includes("@") || !email.includes(".")) {
+          await this.telegramService.sendMessage(chatId, "❌ Пожалуйста, введите корректный email адрес");
+          return;
+        }
+
+        await this.prisma.user.update({
+          where: { telegram_id: chatId },
+          data: { email },
+        });
+
+        if (userState.amount) {
+          const invoice = await this.orderService.createPaymentInvoice(chatId, userState.amount);
+          await ctx.replyWithInvoice(invoice);
+        }
+
+        this.userStates.delete(chatId);
+        return;
+      }
 
       switch (text) {
         case "💳 Пополнить баланс":
