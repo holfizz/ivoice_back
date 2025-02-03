@@ -105,6 +105,11 @@ export class TelegramUpdate {
           return;
         }
 
+        if (amount > 25000) {
+          await this.telegramService.sendMessage(chatId, "❌ Максимальная сумма пополнения - 25 000 ₽");
+          return;
+        }
+
         const user = await this.prisma.user.findFirst({
           where: { telegram_id: chatId },
           select: { email: true },
