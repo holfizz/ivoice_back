@@ -12,13 +12,15 @@ const unlink = promisify(fs.unlink);
 
 @Injectable()
 export class VoiceService {
+  private ffmpegPath: string;
+
   constructor(
     private readonly sberService: SberVoiceService,
     private readonly configService: ConfigService,
   ) {
     // Устанавливаем путь к ffmpeg при инициализации сервиса
-    const ffmpegPath = this.configService.get<string>("FFMPEG_PATH") || "/usr/bin/ffmpeg";
-    ffmpeg.setFfmpegPath(ffmpegPath);
+    this.ffmpegPath = this.configService.get<string>("FFMPEG_PATH") || "/usr/bin/ffmpeg";
+    ffmpeg.setFfmpegPath(this.ffmpegPath);
   }
 
   async generateVoice(text: string, settings: VoiceSettings): Promise<Buffer> {
@@ -26,7 +28,7 @@ export class VoiceService {
       console.log("=== VoiceService: Generating voice ===");
       console.log("Text to synthesize:", text);
       console.log("Voice settings:", settings);
-      console.log("FFmpeg path:", ffmpeg.path);
+      console.log("FFmpeg path:", this.ffmpegPath);
 
       // Получаем базовый голос от Сбера (без изменения скорости)
       const originalBuffer = await this.sberService.generateVoice(text, settings.voiceId, 1.0);
