@@ -97,6 +97,30 @@ export class TelegramUpdate {
         return;
       }
 
+      if (userState?.action === "WAITING_AMOUNT") {
+        const amount = parseFloat(text);
+
+        if (isNaN(amount) || amount < 85) {
+          await this.telegramService.sendMessage(chatId, "❌ Пожалуйста, введите сумму не менее 85 ₽");
+          return;
+        }
+
+        const user = await this.prisma.user.findFirst({
+          where: { telegram_id: chatId },
+          select: { email: true },
+        });
+
+        if (user?.email) {
+          const invoice = await this.orderService.createPaymentInvoice(chatId, amount);
+          await ctx.replyWithInvoice(invoice);
+        } else {
+          this.userStates.set(chatId, { action: "WAITING_EMAIL", amount });
+          await this.telegramService.sendMessage(chatId, "📧 Пожалуйста, отправьте ваш email для получения чека:");
+        }
+
+        return;
+      }
+
       switch (text) {
         case "💳 Пополнить баланс":
           await this.handleCommand(chatId, "/balance");
