@@ -1,5 +1,6 @@
 import { PrismaService } from "@/prisma.service";
 import { Inject, forwardRef } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { Command, Ctx, Help, Message, On, Start, Update } from "nestjs-telegraf";
 import { Context } from "telegraf";
 import { SYMBOL_PRICE } from "../constants";
@@ -17,6 +18,7 @@ export class TelegramUpdate {
     @Inject(forwardRef(() => OrderService))
     private orderService: OrderService,
     private prisma: PrismaService,
+    private configService: ConfigService,
   ) {}
 
   private async handleCommand(chatId: string, text: string) {
@@ -394,6 +396,33 @@ export class TelegramUpdate {
       );
     } catch (error) {
       console.error("Error in help command:", error);
+      await ctx.reply("❌ Произошла ошибка. Попробуйте позже.");
+    }
+  }
+
+  @Command("settings")
+  async onSettingsCommand(@Ctx() ctx: Context) {
+    try {
+      if (!ctx.message) return;
+      const chatId = ctx.message.chat.id.toString();
+
+      // Формируем URL для веб-приложения с userId
+      const webAppUrl = `${this.configService.get<string>("WEBAPP_URL")}?userId=${chatId}`;
+
+      const settingsKeyboard = {
+        inline_keyboard: [
+          [
+            {
+              text: "⚙️ Открыть настройки",
+              web_app: { url: webAppUrl },
+            },
+          ],
+        ],
+      };
+
+      await this.telegramService.sendMessageWithKeyboard(chatId, "Нажмите кнопку ниже, чтобы открыть настройки голоса:", settingsKeyboard);
+    } catch (error) {
+      console.error("Error in settings command:", error);
       await ctx.reply("❌ Произошла ошибка. Попробуйте позже.");
     }
   }
