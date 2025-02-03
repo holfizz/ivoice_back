@@ -113,6 +113,7 @@ export class TelegramUpdate {
         if (user?.email) {
           const invoice = await this.orderService.createPaymentInvoice(chatId, amount);
           await ctx.replyWithInvoice(invoice);
+          this.userStates.delete(chatId);
         } else {
           this.userStates.set(chatId, { action: "WAITING_EMAIL", amount });
           await this.telegramService.sendMessage(chatId, "📧 Пожалуйста, отправьте ваш email для получения чека:");
@@ -218,18 +219,16 @@ export class TelegramUpdate {
       if (data.startsWith("add_balance_")) {
         const amount = parseInt(data.replace("add_balance_", ""));
 
-        // Проверяем, есть ли уже email у пользователя
         const user = await this.prisma.user.findFirst({
           where: { telegram_id: chatId },
           select: { email: true },
         });
 
         if (user?.email) {
-          // Если email уже есть, сразу создаем invoice
           const invoice = await this.orderService.createPaymentInvoice(chatId, amount);
           await ctx.replyWithInvoice(invoice);
+          this.userStates.delete(chatId);
         } else {
-          // Если email нет, запрашиваем его
           this.userStates.set(chatId, { action: "WAITING_EMAIL", amount });
           await this.telegramService.sendMessage(chatId, "📧 Пожалуйста, отправьте ваш email для получения чека:");
         }
