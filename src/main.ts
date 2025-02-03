@@ -16,7 +16,7 @@ const start = async () => {
   app.setGlobalPrefix("api");
 
   app.enableCors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "https://yourmuse.shop"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
     allowedHeaders: ["Content-Type", "Accept", "Authorization"],
     credentials: true,
