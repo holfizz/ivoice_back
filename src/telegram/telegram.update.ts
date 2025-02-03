@@ -309,4 +309,71 @@ export class TelegramUpdate {
       console.error("Error in demo command:", error);
     }
   }
+
+  @Command("payment")
+  async onPayment(@Ctx() ctx: Context) {
+    try {
+      if (!ctx.message) return;
+      const chatId = ctx.message.chat.id.toString();
+
+      const keyboard = {
+        inline_keyboard: [
+          [
+            { text: "85 ₽", callback_data: "add_balance_85" },
+            { text: "100 ₽", callback_data: "add_balance_100" },
+            { text: "150 ₽", callback_data: "add_balance_150" },
+          ],
+          [
+            { text: "200 ₽", callback_data: "add_balance_200" },
+            { text: "500 ₽", callback_data: "add_balance_500" },
+          ],
+          [{ text: "💰 Своя сумма", callback_data: "custom_amount" }],
+        ],
+      };
+
+      await this.telegramService.sendMessageWithKeyboard(
+        chatId,
+        `💰 Выберите сумму пополнения:
+
+💡 Стоимость озвучки: ${SYMBOL_PRICE} ₽/символ
+💳 Ваш баланс: ${await this.telegramService.getUserBalance(chatId)} ₽
+
+ℹ️ Минимальная сумма пополнения - 85 ₽`,
+        keyboard,
+      );
+    } catch (error) {
+      console.error("Error in payment command:", error);
+    }
+  }
+
+  @Command("help")
+  async onHelpCommand(@Ctx() ctx: Context) {
+    try {
+      const chatId = ctx.chat?.id.toString();
+      if (!chatId) return;
+
+      const helpUser = await this.getUserSettings(chatId);
+      await this.telegramService.sendMessage(
+        chatId,
+        `🎯 Как пользоваться ботом:
+
+1️⃣ Просто отправьте текст, который хотите озвучить
+2️⃣ Бот сгенерирует аудио с выбранным голосом
+3️⃣ Нажмите кнопку "Настройки" для выбора голоса
+
+💰 Стоимость: ${SYMBOL_PRICE} руб. за символ
+💳 Ваш баланс: ${helpUser.balance.toFixed(2)} руб.`,
+      );
+    } catch (error) {
+      console.error("Error in help command:", error);
+      await ctx.reply("❌ Произошла ошибка. Попробуйте позже.");
+    }
+  }
+
+  private async getUserSettings(chatId: string) {
+    return await this.prisma.user.findFirstOrThrow({
+      where: { telegram_id: chatId },
+      include: { voiceSettings: true },
+    });
+  }
 }
