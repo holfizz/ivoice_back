@@ -407,7 +407,7 @@ export class TelegramUpdate {
       const chatId = ctx.message.chat.id.toString();
 
       // Формируем URL для веб-приложения с userId в пути
-      const webAppUrl = `${this.configService.get<string>("WEBAPP_URL")}${chatId}`;
+      const webAppUrl = `${this.configService.get<string>("WEBAPP_URL")}/${chatId}`;
 
       const settingsKeyboard = {
         inline_keyboard: [

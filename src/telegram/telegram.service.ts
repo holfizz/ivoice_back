@@ -62,7 +62,7 @@ export class TelegramService {
         });
       }
 
-      const webAppUrl = `${this.configService.get<string>("WEBAPP_URL")}?userId=${telegramId}`;
+      const webAppUrl = `${this.configService.get<string>("WEBAPP_URL")}/${telegramId}`;
       const keyboard = {
         keyboard: [
           [
@@ -182,7 +182,7 @@ export class TelegramService {
     try {
       switch (text) {
         case "/settings": {
-          const webAppUrl = this.configService.get<string>("WEBAPP_URL");
+          const webAppUrl = `${this.configService.get<string>("WEBAPP_URL")}/${chatId}`;
           const settingsKeyboard = {
             inline_keyboard: [
               [
