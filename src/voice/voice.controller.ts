@@ -1,6 +1,6 @@
 import { PrismaService } from "@/prisma.service";
 import { TelegramService } from "@/telegram/telegram.service";
-import { Body, Controller, Inject, Post, Query, forwardRef } from "@nestjs/common";
+import { Body, Controller, Inject, Post, forwardRef } from "@nestjs/common";
 import { Type } from "class-transformer";
 import { IsNumber, IsString, ValidateNested } from "class-validator";
 
@@ -65,10 +65,10 @@ export class VoiceController {
   ) {}
 
   @Post("settings")
-  async updateSettings(@Query("userId") userId: string, @Body() data: UpdateSettingsDto) {
+  async updateSettings(@Body() data: { userId: string; settings: VoiceSettingsDto }) {
     try {
       console.log("=== Voice Controller: Received request ===");
-      console.log("userId:", userId);
+      console.log("userId:", data.userId);
       console.log("Original voice ID:", data.settings.voiceId);
 
       // Преобразуем имя голоса в код и выбираем лучшее качество
@@ -80,13 +80,13 @@ export class VoiceController {
 
       // Сначала проверяем/создаем пользователя
       let user = await this.prisma.user.findFirst({
-        where: { telegram_id: userId },
+        where: { telegram_id: data.userId },
       });
 
       if (!user) {
         user = await this.prisma.user.create({
           data: {
-            telegram_id: userId,
+            telegram_id: data.userId,
             state: "INITIAL",
             balance: 0,
           },
@@ -129,7 +129,7 @@ export class VoiceController {
         `Отправьте текст, который хотите озвучить.`;
 
       console.log("Sending message to Telegram:", message);
-      await this.telegramService.sendMessage(userId, message);
+      await this.telegramService.sendMessage(data.userId, message);
       console.log("Message sent successfully");
 
       return { success: true, settings: updatedSettings };
