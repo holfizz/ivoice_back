@@ -1,1 +1,1 @@
-export const SYMBOL_PRICE = 0.002;
+export const SYMBOL_PRICE = 0.0005;
